@@ -1,0 +1,43 @@
+# =========================
+# Python
+# =========================
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+venv/
+.env.*
+
+# =========================
+# Node / Frontend
+# =========================
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# =========================
+# System Files
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# Ignore ALL inputs
+# =========================
+inputs/
+
+# =========================
+# Ignore ALL outputs
+# =========================
+outputs/*
+
+# BUT allow masks folder
+!outputs/*/
+!outputs/*/masks/
+!outputs/*/masks/*.json
+
+# =========================
+# Logs
+# =========================
+*.log

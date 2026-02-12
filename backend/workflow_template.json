@@ -1,0 +1,627 @@
+{
+  "3": {
+    "inputs": {
+      "seed": 562470584892219,
+      "steps": 6,
+      "cfg": 1,
+      "sampler_name": "euler",
+      "scheduler": "simple",
+      "denoise": 1,
+      "model": [
+        "48",
+        0
+      ],
+      "positive": [
+        "51",
+        0
+      ],
+      "negative": [
+        "51",
+        1
+      ],
+      "latent_image": [
+        "51",
+        2
+      ]
+    },
+    "class_type": "KSampler",
+    "_meta": {
+      "title": "KSampler"
+    }
+  },
+  "6": {
+    "inputs": {
+      "text": "",
+      "clip": [
+        "38",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Positive Prompt)"
+    }
+  },
+  "7": {
+    "inputs": {
+      "text": "色调艳丽，过曝，静态，细节模糊不清，字幕，风格，作品，画作，画面，静止，整体发灰，最差质量，低质量，JPEG压缩残留，丑陋的，残缺的，多余的手指，画得不好的手部，画得不好的脸部，畸形的，毁容的，形态畸形的肢体，手指融合，静止不动的画面，杂乱的背景，三条腿，背景人很多，倒着走",
+      "clip": [
+        "38",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Negative Prompt)"
+    }
+  },
+  "8": {
+    "inputs": {
+      "samples": [
+        "84",
+        0
+      ],
+      "vae": [
+        "39",
+        0
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAE Decode"
+    }
+  },
+  "38": {
+    "inputs": {
+      "clip_name": "umt5_xxl_fp8_e4m3fn_scaled.safetensors",
+      "type": "wan",
+      "device": "default"
+    },
+    "class_type": "CLIPLoader",
+    "_meta": {
+      "title": "Load CLIP"
+    }
+  },
+  "39": {
+    "inputs": {
+      "vae_name": "wan_2.1_vae.safetensors"
+    },
+    "class_type": "VAELoader",
+    "_meta": {
+      "title": "Load VAE"
+    }
+  },
+  "48": {
+    "inputs": {
+      "shift": 8,
+      "model": [
+        "54",
+        0
+      ]
+    },
+    "class_type": "ModelSamplingSD3",
+    "_meta": {
+      "title": "ModelSamplingSD3"
+    }
+  },
+  "51": {
+    "inputs": {
+      "width": [
+        "83",
+        0
+      ],
+      "height": [
+        "76",
+        0
+      ],
+      "length": [
+        "93",
+        0
+      ],
+      "batch_size": 1,
+      "continue_motion_max_frames": 5,
+      "video_frame_offset": 0,
+      "positive": [
+        "6",
+        0
+      ],
+      "negative": [
+        "7",
+        0
+      ],
+      "vae": [
+        "39",
+        0
+      ],
+      "reference_image": [
+        "64",
+        0
+      ],
+      "face_video": [
+        "68",
+        0
+      ],
+      "pose_video": [
+        "95",
+        0
+      ],
+      "background_video": [
+        "72",
+        0
+      ],
+      "character_mask": [
+        "81",
+        0
+      ]
+    },
+    "class_type": "WanAnimateToVideo",
+    "_meta": {
+      "title": "WanAnimateToVideo"
+    }
+  },
+  "54": {
+    "inputs": {
+      "lora_name": "Wan22\\lightx2v_I2V_14B_480p_cfg_step_distill_rank32_bf16.safetensors",
+      "strength_model": 1,
+      "model": [
+        "115",
+        0
+      ]
+    },
+    "class_type": "LoraLoaderModelOnly",
+    "_meta": {
+      "title": "LoraLoaderModelOnly"
+    }
+  },
+  "55": {
+    "inputs": {
+      "detect_hand": "disable",
+      "detect_body": "enable",
+      "detect_face": "disable",
+      "resolution": [
+        "62",
+        0
+      ],
+      "bbox_detector": "yolox_l.torchscript.pt",
+      "pose_estimator": "dw-ll_ucoco_384_bs5.torchscript.pt",
+      "scale_stick_for_xinsr_cn": "disable",
+      "image": [
+        "97",
+        0
+      ]
+    },
+    "class_type": "DWPreprocessor",
+    "_meta": {
+      "title": "DWPose Estimator"
+    }
+  },
+  "59": {
+    "inputs": {
+      "keep_model_loaded": false,
+      "individual_objects": false,
+      "sam2_model": [
+        "80",
+        0
+      ],
+      "image": [
+        "97",
+        0
+      ],
+      "coordinates_positive": [
+        "77",
+        0
+      ]
+    },
+    "class_type": "Sam2Segmentation",
+    "_meta": {
+      "title": "Sam2Segmentation"
+    }
+  },
+  "62": {
+    "inputs": {
+      "image_gen_width": [
+        "83",
+        0
+      ],
+      "image_gen_height": [
+        "76",
+        0
+      ],
+      "resize_mode": "Just Resize",
+      "original_image": [
+        "97",
+        0
+      ]
+    },
+    "class_type": "PixelPerfectResolution",
+    "_meta": {
+      "title": "Pixel Perfect Resolution"
+    }
+  },
+  "64": {
+    "inputs": {
+      "width": [
+        "83",
+        0
+      ],
+      "height": [
+        "76",
+        0
+      ],
+      "upscale_method": "lanczos",
+      "keep_proportion": "pad_edge_pixel",
+      "pad_color": "0, 0, 0",
+      "crop_position": "center",
+      "divisible_by": 16,
+      "device": "cpu",
+      "image": [
+        "78",
+        0
+      ]
+    },
+    "class_type": "ImageResizeKJv2",
+    "_meta": {
+      "title": "Resize Image v2"
+    }
+  },
+  "66": {
+    "inputs": {
+      "person_index": 0,
+      "pose_kps": [
+        "55",
+        1
+      ]
+    },
+    "class_type": "FaceMaskFromPoseKeypoints",
+    "_meta": {
+      "title": "Face Mask From Pose Keypoints"
+    }
+  },
+  "68": {
+    "inputs": {
+      "base_resolution": 512,
+      "padding": 0,
+      "min_crop_resolution": 128,
+      "max_crop_resolution": 512,
+      "image": [
+        "97",
+        0
+      ],
+      "mask": [
+        "66",
+        0
+      ]
+    },
+    "class_type": "ImageCropByMaskAndResize",
+    "_meta": {
+      "title": "Image Crop By Mask And Resize"
+    }
+  },
+  "70": {
+    "inputs": {
+      "expand": 20,
+      "tapered_corners": true,
+      "mask": [
+        "59",
+        0
+      ]
+    },
+    "class_type": "GrowMask",
+    "_meta": {
+      "title": "Grow Mask"
+    }
+  },
+  "72": {
+    "inputs": {
+      "color": "0, 0, 0",
+      "device": "cpu",
+      "image": [
+        "97",
+        0
+      ],
+      "mask": [
+        "81",
+        0
+      ]
+    },
+    "class_type": "DrawMaskOnImage",
+    "_meta": {
+      "title": "Draw Mask On Image"
+    }
+  },
+  "76": {
+    "inputs": {
+      "value": 832
+    },
+    "class_type": "INTConstant",
+    "_meta": {
+      "title": "Height"
+    }
+  },
+  "77": {
+    "inputs": {
+      "points_store": "{\"positive\":[{\"x\":215.36052280258355,\"y\":466.61446607226435},{\"x\":244.9198102460754,\"y\":175.24434698641602}],\"negative\":[{\"x\":0,\"y\":0}]}",
+      "coordinates": "[{\"x\":215.36052280258355,\"y\":466.61446607226435},{\"x\":244.9198102460754,\"y\":175.24434698641602}]",
+      "neg_coordinates": "[{\"x\":0,\"y\":0}]",
+      "bbox_store": "[{}]",
+      "bboxes": "[{}]",
+      "bbox_format": "xyxy",
+      "width": [
+        "83",
+        0
+      ],
+      "height": [
+        "76",
+        0
+      ],
+      "normalize": false,
+      "New canvas": null,
+      "bg_image": [
+        "97",
+        0
+      ]
+    },
+    "class_type": "PointsEditor",
+    "_meta": {
+      "title": "Points Editor"
+    }
+  },
+  "78": {
+    "inputs": {
+      "image": "char1.png"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Load Image"
+    }
+  },
+  "79": {
+    "inputs": {
+      "video": "Video2_BothChar_Time_64-70.mp4",
+      "force_rate": 16,
+      "custom_width": [
+        "83",
+        0
+      ],
+      "custom_height": [
+        "76",
+        0
+      ],
+      "frame_load_cap": [
+        "93",
+        0
+      ],
+      "skip_first_frames": 0,
+      "select_every_nth": 1,
+      "format": "Wan"
+    },
+    "class_type": "VHS_LoadVideo",
+    "_meta": {
+      "title": "Load Video (Upload) 🎥🅥🅗🅢"
+    }
+  },
+  "80": {
+    "inputs": {
+      "model": "sam2_hiera_base_plus.safetensors",
+      "segmentor": "video",
+      "device": "cuda",
+      "precision": "fp16"
+    },
+    "class_type": "DownloadAndLoadSAM2Model",
+    "_meta": {
+      "title": "(Down)Load SAM2Model"
+    }
+  },
+  "81": {
+    "inputs": {
+      "block_size": 32,
+      "device": "cpu",
+      "masks": [
+        "70",
+        0
+      ]
+    },
+    "class_type": "BlockifyMask",
+    "_meta": {
+      "title": "Blockify Mask"
+    }
+  },
+  "82": {
+    "inputs": {
+      "frame_rate": 16,
+      "loop_count": 0,
+      "filename_prefix": "WanVideo2_1_T2V",
+      "format": "video/h264-mp4",
+      "pix_fmt": "yuv420p",
+      "crf": 19,
+      "save_metadata": true,
+      "trim_to_audio": false,
+      "pingpong": false,
+      "save_output": false,
+      "images": [
+        "72",
+        0
+      ]
+    },
+    "class_type": "VHS_VideoCombine",
+    "_meta": {
+      "title": "Video Combine 🎥🅥🅗🅢"
+    }
+  },
+  "83": {
+    "inputs": {
+      "value": 480
+    },
+    "class_type": "INTConstant",
+    "_meta": {
+      "title": "Width"
+    }
+  },
+  "84": {
+    "inputs": {
+      "trim_amount": [
+        "51",
+        3
+      ],
+      "samples": [
+        "3",
+        0
+      ]
+    },
+    "class_type": "TrimVideoLatent",
+    "_meta": {
+      "title": "TrimVideoLatent"
+    }
+  },
+  "85": {
+    "inputs": {
+      "unet_name": "Wan2.2-Animate-14B-Q2_K.gguf"
+    },
+    "class_type": "UnetLoaderGGUF",
+    "_meta": {
+      "title": "Unet Loader (GGUF)"
+    }
+  },
+  "89": {
+    "inputs": {
+      "fps": 16,
+      "images": [
+        "55",
+        0
+      ]
+    },
+    "class_type": "PreviewAnimation",
+    "_meta": {
+      "title": "Preview Animation 85x480x832"
+    }
+  },
+  "93": {
+    "inputs": {
+      "value": [
+        "117",
+        1
+      ]
+    },
+    "class_type": "Int",
+    "_meta": {
+      "title": "frames"
+    }
+  },
+  "95": {
+    "inputs": {
+      "width": [
+        "83",
+        0
+      ],
+      "height": [
+        "76",
+        0
+      ],
+      "upscale_method": "nearest-exact",
+      "keep_proportion": "stretch",
+      "pad_color": "0, 0, 0",
+      "crop_position": "center",
+      "divisible_by": 2,
+      "device": "cpu",
+      "image": [
+        "55",
+        0
+      ]
+    },
+    "class_type": "ImageResizeKJv2",
+    "_meta": {
+      "title": "Resize Image v2"
+    }
+  },
+  "96": {
+    "inputs": {
+      "fps": 16,
+      "images": [
+        "68",
+        0
+      ]
+    },
+    "class_type": "PreviewAnimation",
+    "_meta": {
+      "title": "Preview Animation 85x512x512"
+    }
+  },
+  "97": {
+    "inputs": {
+      "width": [
+        "83",
+        0
+      ],
+      "height": [
+        "76",
+        0
+      ],
+      "upscale_method": "nearest-exact",
+      "keep_proportion": "stretch",
+      "pad_color": "0, 0, 0",
+      "crop_position": "center",
+      "divisible_by": 2,
+      "device": "cpu",
+      "image": [
+        "79",
+        0
+      ]
+    },
+    "class_type": "ImageResizeKJv2",
+    "_meta": {
+      "title": "Resize Image v2"
+    }
+  },
+  "114": {
+    "inputs": {
+      "frame_rate": 16,
+      "loop_count": 0,
+      "filename_prefix": "Animate",
+      "format": "video/h264-mp4",
+      "pix_fmt": "yuv420p",
+      "crf": 19,
+      "save_metadata": true,
+      "trim_to_audio": false,
+      "pingpong": false,
+      "save_output": true,
+      "images": [
+        "8",
+        0
+      ]
+    },
+    "class_type": "VHS_VideoCombine",
+    "_meta": {
+      "title": "Video Combine 🎥🅥🅗🅢"
+    }
+  },
+  "115": {
+    "inputs": {
+      "sage_attention": "auto",
+      "allow_compile": false,
+      "model": [
+        "85",
+        0
+      ]
+    },
+    "class_type": "PathchSageAttentionKJ",
+    "_meta": {
+      "title": "Patch Sage Attention KJ"
+    }
+  },
+  "117": {
+    "inputs": {
+      "video": "Video2_BothChar_Time_64-70.mp4",
+      "force_rate": 0,
+      "custom_width": 0,
+      "custom_height": 0,
+      "frame_load_cap": 0,
+      "skip_first_frames": 0,
+      "select_every_nth": 1,
+      "format": "AnimateDiff"
+    },
+    "class_type": "VHS_LoadVideo",
+    "_meta": {
+      "title": "Load Video (Upload) 🎥🅥🅗🅢"
+    }
+  }
+}
