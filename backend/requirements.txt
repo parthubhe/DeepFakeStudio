@@ -1,6 +1,6 @@
 fastapi
 uvicorn
-websockets
 requests
-aiofiles
 python-multipart
+python-dotenv
+websockets

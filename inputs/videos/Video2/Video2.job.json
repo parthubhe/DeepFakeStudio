@@ -1,0 +1,277 @@
+{
+  "video_id": "Video2",
+  "fps": 16,
+  "clips": [
+    {
+      "clip_id": "Video2_Char1_Time_0-6",
+      "path": "./videos/Video2/TrimmedClips/Video2_Char1_Time_0-6.mp4",
+      "start": 0,
+      "end": 6,
+      "type": "Char1",
+      "actions": [
+        {
+          "pass": 1,
+          "character": "char1",
+          "mask": "AUTO"
+        }
+      ]
+    },
+    {
+      "clip_id": "Video2_Char1_Time_6-12",
+      "path": "./videos/Video2/TrimmedClips/Video2_Char1_Time_6-12.mp4",
+      "start": 6,
+      "end": 12,
+      "type": "Char1",
+      "actions": [
+        {
+          "pass": 1,
+          "character": "char1",
+          "mask": "AUTO"
+        }
+      ]
+    },
+    {
+      "clip_id": "Video2_Char1_Time_11-14",
+      "path": "./videos/Video2/TrimmedClips/Video2_Char1_Time_11-14.mp4",
+      "start": 11,
+      "end": 14,
+      "type": "Char1",
+      "actions": [
+        {
+          "pass": 1,
+          "character": "char1",
+          "mask": "AUTO"
+        }
+      ]
+    },
+    {
+      "clip_id": "Video2_Char2_Time_14-15",
+      "path": "./videos/Video2/TrimmedClips/Video2_Char2_Time_14-15.mp4",
+      "start": 14,
+      "end": 15,
+      "type": "Char2",
+      "actions": [
+        {
+          "pass": 1,
+          "character": "char2",
+          "mask": "AUTO"
+        }
+      ]
+    },
+    {
+      "clip_id": "Video2_Char1_Time_15-20",
+      "path": "./videos/Video2/TrimmedClips/Video2_Char1_Time_15-20.mp4",
+      "start": 15,
+      "end": 20,
+      "type": "Char1",
+      "actions": [
+        {
+          "pass": 1,
+          "character": "char1",
+          "mask": "AUTO"
+        }
+      ]
+    },
+    {
+      "clip_id": "Video2_Char2_Time_20-21",
+      "path": "./videos/Video2/TrimmedClips/Video2_Char2_Time_20-21.mp4",
+      "start": 20,
+      "end": 21,
+      "type": "Char2",
+      "actions": [
+        {
+          "pass": 1,
+          "character": "char2",
+          "mask": "AUTO"
+        }
+      ]
+    },
+    {
+      "clip_id": "Video2_Char1_Time_22-27",
+      "path": "./videos/Video2/TrimmedClips/Video2_Char1_Time_22-27.mp4",
+      "start": 22,
+      "end": 27,
+      "type": "Char1",
+      "actions": [
+        {
+          "pass": 1,
+          "character": "char1",
+          "mask": "AUTO"
+        }
+      ]
+    },
+    {
+      "clip_id": "Video2_NoChar_Time_27-31",
+      "path": "./videos/Video2/TrimmedClips/Video2_NoChar_Time_27-31.mp4",
+      "start": 27,
+      "end": 31,
+      "type": "NoChar",
+      "actions": []
+    },
+    {
+      "clip_id": "Video2_Char2_Time_31-33",
+      "path": "./videos/Video2/TrimmedClips/Video2_Char2_Time_31-33.mp4",
+      "start": 31,
+      "end": 33,
+      "type": "Char2",
+      "actions": [
+        {
+          "pass": 1,
+          "character": "char2",
+          "mask": "AUTO"
+        }
+      ]
+    },
+    {
+      "clip_id": "Video2_Char1_Time_33-36",
+      "path": "./videos/Video2/TrimmedClips/Video2_Char1_Time_33-36.mp4",
+      "start": 33,
+      "end": 36,
+      "type": "Char1",
+      "actions": [
+        {
+          "pass": 1,
+          "character": "char1",
+          "mask": "AUTO"
+        }
+      ]
+    },
+    {
+      "clip_id": "Video2_BothChar_Time_36-41",
+      "path": "./videos/Video2/TrimmedClips/Video2_BothChar_Time_36-41.mp4",
+      "start": 36,
+      "end": 41,
+      "type": "BothChar",
+      "actions": [
+        {
+          "pass": 1,
+          "character": "char1",
+          "mask": "./videos/Video2/TrimmedClips/Masks/Video2_BothChar_Time_36-41__mask_char1.mp4"
+        },
+        {
+          "pass": 2,
+          "character": "char2",
+          "mask": "./videos/Video2/TrimmedClips/Masks/Video2_BothChar_Time_36-41__mask_char2.mp4"
+        }
+      ]
+    },
+    {
+      "clip_id": "Video2_BothChar_Time_41-46",
+      "path": "./videos/Video2/TrimmedClips/Video2_BothChar_Time_41-46.mp4",
+      "start": 41,
+      "end": 46,
+      "type": "BothChar",
+      "actions": [
+        {
+          "pass": 1,
+          "character": "char1",
+          "mask": "./videos/Video2/TrimmedClips/Masks/Video2_BothChar_Time_41-46__mask_char1.mp4"
+        },
+        {
+          "pass": 2,
+          "character": "char2",
+          "mask": "./videos/Video2/TrimmedClips/Masks/Video2_BothChar_Time_41-46__mask_char2.mp4"
+        }
+      ]
+    },
+    {
+      "clip_id": "Video2_Char1_Time_46-50",
+      "path": "./videos/Video2/TrimmedClips/Video2_Char1_Time_46-50.mp4",
+      "start": 46,
+      "end": 50,
+      "type": "Char1",
+      "actions": [
+        {
+          "pass": 1,
+          "character": "char1",
+          "mask": "AUTO"
+        }
+      ]
+    },
+    {
+      "clip_id": "Video2_NoChar_Time_50-53",
+      "path": "./videos/Video2/TrimmedClips/Video2_NoChar_Time_50-53.mp4",
+      "start": 50,
+      "end": 53,
+      "type": "NoChar",
+      "actions": []
+    },
+    {
+      "clip_id": "Video2_Char1_Time_53-56",
+      "path": "./videos/Video2/TrimmedClips/Video2_Char1_Time_53-56.mp4",
+      "start": 53,
+      "end": 56,
+      "type": "Char1",
+      "actions": [
+        {
+          "pass": 1,
+          "character": "char1",
+          "mask": "AUTO"
+        }
+      ]
+    },
+    {
+      "clip_id": "Video2_NoChar_Time_56-60",
+      "path": "./videos/Video2/TrimmedClips/Video2_NoChar_Time_56-60.mp4",
+      "start": 56,
+      "end": 60,
+      "type": "NoChar",
+      "actions": []
+    },
+    {
+      "clip_id": "Video2_Char2_Time_60-64",
+      "path": "./videos/Video2/TrimmedClips/Video2_Char2_Time_60-64.mp4",
+      "start": 60,
+      "end": 64,
+      "type": "Char2",
+      "actions": [
+        {
+          "pass": 1,
+          "character": "char2",
+          "mask": "AUTO"
+        }
+      ]
+    },
+    {
+      "clip_id": "Video2_BothChar_Time_64-70",
+      "path": "./videos/Video2/TrimmedClips/Video2_BothChar_Time_64-70.mp4",
+      "start": 64,
+      "end": 70,
+      "type": "BothChar",
+      "actions": [
+        {
+          "pass": 1,
+          "character": "char1",
+          "mask": "./videos/Video2/TrimmedClips/Masks/Video2_BothChar_Time_64-70__mask_char1.mp4"
+        },
+        {
+          "pass": 2,
+          "character": "char2",
+          "mask": "./videos/Video2/TrimmedClips/Masks/Video2_BothChar_Time_64-70__mask_char2.mp4"
+        }
+      ]
+    },
+    {
+      "clip_id": "Video2_Char2_Time_70-73",
+      "path": "./videos/Video2/TrimmedClips/Video2_Char2_Time_70-73.mp4",
+      "start": 70,
+      "end": 73,
+      "type": "Char2",
+      "actions": [
+        {
+          "pass": 1,
+          "character": "char2",
+          "mask": "AUTO"
+        }
+      ]
+    },
+    {
+      "clip_id": "Video2_NoChar_Time_73-84",
+      "path": "./videos/Video2/TrimmedClips/Video2_NoChar_Time_73-84.mp4",
+      "start": 73,
+      "end": 84,
+      "type": "NoChar",
+      "actions": []
+    }
+  ]
+}
