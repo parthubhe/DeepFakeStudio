@@ -17,6 +17,7 @@ import comfy_client
 import traceback
 import requests
 import subprocess
+import time  # <--- THIS WAS MISSING
 
 load_dotenv()
 app = FastAPI()
@@ -394,7 +395,6 @@ def stitch_video(video_id: str):
                 f.write(f"file '{str(clip_file.resolve()).replace(os.sep, '/')}'\n")
             else:
                 # Fallback to input (might need conversion to match fps/encoding)
-                # For simplicity in this version, we assume input exists
                 clean_name = Path(clip["path"]).name
                 source = INPUTS_DIR / video_id / "TrimmedClips" / clean_name
                 # Need to convert source to temp file to match params or ffmpeg concat fails
