@@ -117,7 +117,8 @@ def get_job_profile_path(video_id: str) -> Path:
     return path
 
 def get_mask_path(video_id: str, clip_id: str, pass_num: int) -> Path:
-    mask_dir = OUTPUTS_DIR / video_id / "masks"
+    # FIX: Point to persistent inputs directory instead of temporary outputs
+    mask_dir = INPUTS_DIR / video_id / "masks"
     mask_dir.mkdir(parents=True, exist_ok=True)
     return mask_dir / f"{clip_id}_pass{pass_num}.json"
 
@@ -162,7 +163,6 @@ def run_queue_processor(video_id: str, clip_ids: List[str]):
             else:
                  current_source = INPUTS_DIR / clip_info["path"]
 
-            # FIX: Store the true original source for accurate comparison later
             original_source = current_source
             output_dir = OUTPUTS_DIR / video_id
             output_dir.mkdir(parents=True, exist_ok=True)
@@ -208,7 +208,6 @@ def run_queue_processor(video_id: str, clip_ids: List[str]):
                     traceback.print_exc()
                     break
 
-            # FIX: Only copy and mark as DONE if a pass successfully generated a new video
             final_dest = output_dir / f"{clip_id}.mp4"
             if current_source.exists() and current_source != original_source:
                  shutil.copy(current_source, final_dest)
@@ -258,6 +257,14 @@ def load_mask(video_id: str, clip_id: str, pass_num: int):
     if not mask_path.exists(): raise HTTPException(status_code=404, detail="No saved mask")
     return json.load(open(mask_path, "r"))
 
+# FIX: Added Endpoint to reset (delete) the mask
+@app.post("/mask/reset/{video_id}/{clip_id}/{pass_num}")
+def reset_mask(video_id: str, clip_id: str, pass_num: int):
+    mask_path = get_mask_path(video_id, clip_id, pass_num)
+    if mask_path.exists():
+        mask_path.unlink()
+    return {"status": "reset"}
+
 @app.post("/character/upload/{character_name}")
 async def upload_character(character_name: str, file: UploadFile = File(...)):
     save_path = ASSETS_DIR / f"custom_{character_name}.png"
@@ -276,9 +283,32 @@ async def queue_single_clip(video_id: str, clip_data: Dict, token: str = Depends
 async def queue_all_clips(video_id: str, token: str = Depends(get_api_key)):
     json_path = get_job_profile_path(video_id)
     with open(json_path, "r") as f: data = json.load(f)
-    ids = [c["clip_id"] for c in data["clips"]]
-    JOB_QUEUE.put((video_id, ids))
-    return {"status": "queued", "count": len(ids)}
+    
+    ids_to_queue = []
+    missing_masks = []
+    
+    # FIX: Loop through clips to check if all necessary masks are saved
+    for clip in data["clips"]:
+        if clip.get("type") == "NoChar":
+            ids_to_queue.append(clip["clip_id"])
+            continue
+            
+        has_all_masks = True
+        for action in clip.get("actions", []):
+            pass_num = action["pass"]
+            # If mask file doesn't exist, we can't queue it
+            if not get_mask_path(video_id, clip["clip_id"], pass_num).exists():
+                missing_masks.append(f"{clip['clip_id']} (Pass {pass_num})")
+                has_all_masks = False
+                
+        if has_all_masks:
+            ids_to_queue.append(clip["clip_id"])
+            
+    if missing_masks:
+        return {"status": "error", "missing": missing_masks}
+        
+    JOB_QUEUE.put((video_id, ids_to_queue))
+    return {"status": "queued", "count": len(ids_to_queue)}
 
 @app.post("/stop")
 def stop_generation(token: str = Depends(get_api_key)):
