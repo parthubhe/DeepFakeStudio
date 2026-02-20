@@ -18,8 +18,7 @@ load_dotenv()
 # CONFIGURATION 
 # =================================================================================
 
-# RunPod HTTP Proxy Address (NO https://, NO trailing /)
-SERVER_ADDRESS = os.getenv("COMFY_HOST", "194.68.245.208:22054") 
+SERVER_ADDRESS = os.getenv("COMFY_HOST", "194.68.245.126:22173") 
 USE_SECURE = False
 COMFY_AUTH = None 
 
@@ -50,7 +49,7 @@ def create_retry_session():
     return session
 
 def queue_prompt(prompt, client_id):
-    print(f"=== SENDING PROMPT TO {SERVER_ADDRESS} ===")
+    print(f"=== SENDING PROMPT TO {SERVER_ADDRESS} ===", flush=True)
     p = {"prompt": prompt, "client_id": client_id}
     data = json.dumps(p).encode("utf-8")
     
@@ -63,21 +62,21 @@ def queue_prompt(prompt, client_id):
     for attempt in range(3):
         try:
             req = urllib.request.Request(url, data=data, headers=headers)
-            with urllib.request.urlopen(req, timeout=10) as response:
+            with urllib.request.urlopen(req, timeout=15) as response: # Added Timeout
                 result = json.loads(response.read())
-                print("✅ ComfyUI accepted prompt. ID:", result.get("prompt_id"))
+                print("✅ ComfyUI accepted prompt. ID:", result.get("prompt_id"), flush=True)
                 return result
         except Exception as e:
-            print(f"⚠️ Queue attempt {attempt+1} failed: {e}")
+            print(f"⚠️ Queue attempt {attempt+1} failed: {e}", flush=True)
             time.sleep(2)
             
     raise RuntimeError("Failed to queue prompt after 3 attempts.")
 
 def upload_file(file_path, subfolder="", overwrite=True):
-    print(f"[UPLOAD] Sending {file_path}...")
+    print(f"[UPLOAD] Sending {file_path}...", flush=True)
     
     if not os.path.exists(file_path):
-        print(f"❌ File not found: {file_path}")
+        print(f"❌ File not found: {file_path}", flush=True)
         return None
 
     session = create_retry_session()
@@ -104,34 +103,35 @@ def upload_file(file_path, subfolder="", overwrite=True):
                 timeout=600 
             )
 
-        print(f"✅ Upload response: {response.status_code}")
+        print(f"✅ Upload response: {response.status_code}", flush=True)
         if response.status_code != 200:
-            print(f"   -> Failed: {response.text}")
+            print(f"   -> Failed: {response.text}", flush=True)
             return None
             
         return response.json()
     except Exception as e:
-        print(f"❌ Upload failed: {e}")
+        print(f"❌ Upload failed: {e}", flush=True)
         return None
     finally:
         session.close()
 
 def connect_websocket(client_id):
-    print(f"🔌 Connecting to WebSocket {WS_PROTO}://{SERVER_ADDRESS}...")
+    print(f"🔌 Connecting to WebSocket {WS_PROTO}://{SERVER_ADDRESS}...", flush=True)
     ws_url = f"{WS_PROTO}://{SERVER_ADDRESS}/ws?clientId={client_id}"
     
     ws = websocket.WebSocket()
     try:
         ws.connect(ws_url, timeout=10)
-        print("✅ WebSocket connected")
+        ws.settimeout(10) # <--- CRITICAL FIX: PREVENTS FOREVER HANGING
+        print("✅ WebSocket connected", flush=True)
         return ws
     except Exception as e:
-        print(f"❌ WebSocket connection failed: {e}")
+        print(f"❌ WebSocket connection failed: {e}", flush=True)
         return None 
 
 def track_progress(ws, prompt_id):
     if not ws: return False
-    print(f"⏳ Tracking progress for {prompt_id}...")
+    print(f"⏳ Tracking progress for {prompt_id}...", flush=True)
     
     while True:
         try:
@@ -143,12 +143,14 @@ def track_progress(ws, prompt_id):
                 if msg_type == "executing":
                     data = message["data"]
                     if data["node"] is None and data["prompt_id"] == prompt_id:
-                        print("✅ Execution complete (WebSocket confirmed).")
+                        print("✅ Execution complete (WebSocket confirmed).", flush=True)
                         return True
-                    elif data["node"]:
-                        print(f"   -> Executing Node: {data['node']}")
+        except websocket.WebSocketTimeoutException:
+            # Drop the silent WS and let the HTTP poller take over
+            print("   [WS] Timeout waiting for message, falling back to HTTP polling...", flush=True)
+            break
         except Exception as e:
-            print(f"❌ WS Disconnected (Timeout/Network): {e}")
+            print(f"❌ WS Disconnected (Network): {e}", flush=True)
             break
             
     return False
@@ -156,11 +158,11 @@ def track_progress(ws, prompt_id):
 def get_history(prompt_id):
     url = f"{HTTP_PROTO}://{SERVER_ADDRESS}/history/{prompt_id}"
     req = urllib.request.Request(url, headers=get_auth_header())
-    with urllib.request.urlopen(req) as response:
+    with urllib.request.urlopen(req, timeout=15) as response: # <--- CRITICAL FIX
         return json.loads(response.read())
 
 def wait_for_completion(prompt_id):
-    print(f"🔍 Polling history for confirmation of {prompt_id}...")
+    print(f"🔍 Polling history for confirmation of {prompt_id}...", flush=True)
     start_time = time.time()
     
     while True:
@@ -172,11 +174,11 @@ def wait_for_completion(prompt_id):
             if prompt_id in history:
                 outputs = history[prompt_id].get('outputs', {})
                 if outputs:
-                    print("✅ Job found in history with outputs!")
+                    print("✅ Job found in history with outputs!", flush=True)
                     return history
             
         except Exception as e:
-            print(f"   (polling error: {e}) - Retrying...")
+            print(f"   (polling error: {e}) - Retrying...", flush=True)
         
         time.sleep(5) 
 
@@ -186,8 +188,6 @@ def load_workflow_template():
         return json.load(f)
 
 def generate_clip(source_video_path, character_image_path, mask_path, output_filename, video_id=None, seed=None, mask_points=None):
-    
-    # 1. Unique Client ID for this specific thread
     current_client_id = str(uuid.uuid4())
 
     vid_resp = upload_file(source_video_path)
@@ -236,22 +236,22 @@ def generate_clip(source_video_path, character_image_path, mask_path, output_fil
     history = wait_for_completion(prompt_id)
     outputs = history.get(prompt_id, {}).get('outputs', {})
     
-    print(f"[DEBUG] Validating outputs against prefix: '{output_filename}'")
+    print(f"[DEBUG] Validating outputs against prefix: '{output_filename}'", flush=True)
     
     for node_id, node_output in outputs.items():
         if 'videos' in node_output:
             for item in node_output['videos']:
                 if item['filename'].startswith(output_filename):
-                    print(f"✅ Found output: {item['filename']}")
+                    print(f"✅ Found output: {item['filename']}", flush=True)
                     return item['filename']
         if 'gifs' in node_output:
             for item in node_output['gifs']:
                 if item['filename'].startswith(output_filename):
-                    print(f"✅ Found output: {item['filename']}")
+                    print(f"✅ Found output: {item['filename']}", flush=True)
                     return item['filename']
 
     if "114" in outputs and 'videos' in outputs["114"]:
          return outputs["114"]['videos'][0]['filename']
 
-    print("❌ CRITICAL: No matching video file found.")
+    print("❌ CRITICAL: No matching video file found.", flush=True)
     return None
