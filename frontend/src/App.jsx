@@ -29,15 +29,8 @@ const Toast = ({ message, onClose }) => {
 };
 
 const ClipCard = React.memo(({ clip, openMaskModal, currentProject, status }) => {
-  // Ensure path matches backend static mount logic
-  const cleanPath = clip.path.replace("./videos/", "").replace("TrimmedClips/", "TrimmedClips/");
-  const videoSrc = `${API_BASE}/inputs/${currentProject}/${cleanPath.split('/').pop()}`; // Fallback logic for simple paths
-  // Actually, backend mounts /inputs -> INPUTS_DIR. 
-  // If clip.path is "./videos/Video2/TrimmedClips/x.mp4", we need "Video2/TrimmedClips/x.mp4"
-  // Adjust regex to be safe:
   const relPath = clip.path.replace(/^\.\/videos\//, "");
   const inputUrl = `${API_BASE}/inputs/${relPath}`;
-
   const outputSrc = `${API_BASE}/outputs/${currentProject}/${clip.clip_id}.mp4`;
   
   const isProcessing = status.current_clip === clip.clip_id;
@@ -108,16 +101,13 @@ function App() {
   const [status, setStatus] = useState({ is_processing: false, queue: [], last_completed: null });
   const [toast, setToast] = useState(null);
   
-  // Auth State
   const [token, setToken] = useState(localStorage.getItem("dfs_token") || "");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Custom Char State
   const [char1, setChar1] = useState(null);
   const [char2, setChar2] = useState(null);
   const [hasCustomChars, setHasCustomChars] = useState({ char1: false, char2: false });
 
-  // Modal State
   const [activeClip, setActiveClip] = useState(null);
   const [frameUrl, setFrameUrl] = useState(null);
   const [maskPoints, setMaskPoints] = useState({ positive: [], negative: [] });
@@ -125,13 +115,12 @@ function App() {
   const [modalTab, setModalTab] = useState(1);
   const lastAlertedJob = useRef(null);
 
-  // --- AUTH CHECK ---
   useEffect(() => {
     const checkAuth = async () => {
       try {
         if(token) {
            axios.defaults.headers.common['X-Access-Token'] = token;
-           await axios.get(`${API_BASE}/`); // Simple health check
+           await axios.get(`${API_BASE}/`); 
            setIsAuthenticated(true);
         }
       } catch(e) {
@@ -141,17 +130,11 @@ function App() {
     checkAuth();
   }, [token]);
 
-  // --- MAIN POLLING ---
   useEffect(() => {
     if(!isAuthenticated) return;
-    
     fetchProjects();
     checkCustomChars();
-    
-    const interval = setInterval(() => {
-      fetchStatusAndProject();
-    }, 1000);
-    
+    const interval = setInterval(() => { fetchStatusAndProject(); }, 1000);
     return () => clearInterval(interval);
   }, [currentProject, isAuthenticated]);
 
@@ -160,7 +143,6 @@ function App() {
     try {
       const res = await axios.get(`${API_BASE}/status`, { params: { t: timestamp } });
       const newStatus = res.data;
-      
       setStatus(prev => {
         if (JSON.stringify(prev) !== JSON.stringify(newStatus)) return newStatus;
         return prev;
@@ -172,7 +154,6 @@ function App() {
         if (currentProject) fetchProjectData(currentProject);
       }
     } catch(e) {}
-
     if (currentProject) fetchProjectData(currentProject);
   };
 
@@ -254,8 +235,20 @@ function App() {
     await axios.post(`${API_BASE}/mask/save/${currentProject}/${activeClip.clip_id}/${modalTab}`, maskPoints);
   };
 
+  // FIX: Reset mask logic connected to backend
+  const resetMaskCurrentPass = async () => {
+    if (!activeClip) return;
+    if (window.confirm("Are you sure you want to reset the saved mask for this pass?")) {
+      await axios.post(`${API_BASE}/mask/reset/${currentProject}/${activeClip.clip_id}/${modalTab}`);
+      setMaskPoints({ positive: [], negative: [] }); // Clear UI immediately
+      setToast("Mask reset successfully.");
+    }
+  };
+
+  // FIX: Force synchronous clearing of mask UI when switching tabs to prevent state bleeding
   const handleTabChange = async (newPass) => {
     await saveMaskCurrentPass();
+    setMaskPoints({ positive: [], negative: [] }); // Instantly wipes screen before new load happens
     setModalTab(newPass);
     await loadMaskForPass(activeClip, newPass);
   };
@@ -267,10 +260,11 @@ function App() {
     setToast(`Job Queued: ${activeClip.clip_id}`);
   };
 
+  // FIX: Shows accurate alert when required masks aren't drawn yet
   const handleQueueAll = async () => {
     const res = await axios.post(`${API_BASE}/queue/all/${currentProject}`);
     if (res.data.status === "error") {
-      alert("Missing masks: " + res.data.missing.join(", "));
+      alert("Missing masks for the following clips. Please generate them first:\n\n" + res.data.missing.join("\n"));
     } else {
       setToast(`Queued ${res.data.count} clips.`);
     }
@@ -408,6 +402,7 @@ function App() {
           modalTab={modalTab}
           onTabChange={handleTabChange}
           onSave={saveMaskCurrentPass}
+          onReset={resetMaskCurrentPass} // Passed new prop
           onConfirm={confirmAndGenerateSingle}
           onClose={() => setActiveClip(null)}
           loadFrame={loadFrame}
@@ -422,7 +417,7 @@ function App() {
 const MaskModal = ({ 
   clip, frameUrl, setFrameUrl, frameIndex, setFrameIndex,
   maskPoints, setMaskPoints, modalTab, onTabChange,
-  onSave, onConfirm, onClose, loadFrame, loadLastMask, currentProject 
+  onSave, onReset, onConfirm, onClose, loadFrame, loadLastMask, currentProject 
 }) => {
   const actions = clip.actions || [];
   const isMultiPass = actions.length > 1;
@@ -473,6 +468,8 @@ const MaskModal = ({
           <button onClick={() => { setFrameIndex(0); loadFrame(clip, 0); }} className="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded text-sm transition">Reset Frame</button>
           <button onClick={() => { const f = prompt("Frame Number:"); if(f) { setFrameIndex(parseInt(f)); loadFrame(clip, parseInt(f)); }}} className="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded text-sm transition">Jump to Frame</button>
           <div className="flex-grow"></div>
+          {/* FIX: Added Reset button next to Save / Reload */}
+          <button onClick={onReset} className="bg-red-600/20 hover:bg-red-600/40 text-red-200 border border-red-600/50 px-4 py-1 rounded text-sm transition flex items-center gap-2"><Trash2 size={14}/> Reset Mask</button>
           <button onClick={loadLastMask} className="bg-yellow-600/20 hover:bg-yellow-600/40 text-yellow-200 border border-yellow-600/50 px-4 py-1 rounded text-sm transition flex items-center gap-2"><ArrowLeft size={14}/> Reload Saved</button>
           <button onClick={onSave} className="bg-blue-600/20 hover:bg-blue-600/40 text-blue-200 border border-blue-600/50 px-4 py-1 rounded text-sm transition flex items-center gap-2"><Download size={14}/> Save Progress</button>
         </div>
