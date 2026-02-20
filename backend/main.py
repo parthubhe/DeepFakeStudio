@@ -17,7 +17,7 @@ import comfy_client
 import traceback
 import requests
 import subprocess
-import time  # <--- THIS WAS MISSING
+import time  
 
 load_dotenv()
 app = FastAPI()
@@ -158,7 +158,8 @@ def move_comfy_output(remote_filename: str, dest_path: Path) -> bool:
     for attempt in range(5):
         if stop_event.is_set(): return False
         try:
-            r = requests.get(url, headers=get_auth_header(), stream=True)
+            # FIX 1: ADDED TIMEOUT=30 HERE TO PREVENT HANGING IF RUNPOD DIES MID-DOWNLOAD
+            r = requests.get(url, headers=get_auth_header(), stream=True, timeout=30)
             if r.status_code == 200:
                 dest_path.parent.mkdir(parents=True, exist_ok=True)
                 with open(dest_path, 'wb') as f:
@@ -261,8 +262,9 @@ def run_queue_processor(video_id: str, clip_ids: List[str]):
                  print(f"   [DONE] Saved: {final_dest}")
                  processing_status["last_completed"] = clip_id
 
-        if not stop_event.is_set():
-             stitch_video(video_id)
+        # FIX 2: COMMENTED OUT AUTO-STITCHING TO PREVENT FFMPEG CPU FREEZE
+        # if not stop_event.is_set():
+        #      stitch_video(video_id)
 
     except Exception as e:
         print("[QUEUE ERROR]", e)
