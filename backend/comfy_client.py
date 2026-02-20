@@ -19,7 +19,7 @@ load_dotenv()
 # =================================================================================
 
 # RunPod HTTP Proxy Address (NO https://, NO trailing /)
-SERVER_ADDRESS = os.getenv("COMFY_HOST", "194.68.245.126:22173") 
+SERVER_ADDRESS = os.getenv("COMFY_HOST", "194.68.245.1:22025") 
 USE_SECURE = False
 COMFY_AUTH = None 
 
