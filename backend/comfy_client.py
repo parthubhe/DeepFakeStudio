@@ -18,7 +18,7 @@ load_dotenv()
 # CONFIGURATION 
 # =================================================================================
 
-SERVER_ADDRESS = os.getenv("COMFY_HOST", "194.68.245.63:22151") 
+SERVER_ADDRESS = os.getenv("COMFY_HOST", "194.68.245.76:22013") 
 USE_SECURE = False
 COMFY_AUTH = None 
 
